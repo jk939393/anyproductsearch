@@ -11,7 +11,6 @@ a=API_KEY
 b= CX
 BASE_URL = "https://www.googleapis.com/customsearch/v1"
 
-
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 #pubmed
 @app.route("/google_search/<string:query>", methods=['GET'])
@@ -24,7 +23,7 @@ async def get_google_search_results(query):
             "q": query,
             "cx": CX,
             "key": API_KEY,
-            "num": 10  # Set the number of results to return (max 10)
+            "num": 5
         })
 
         if response.status_code != 200:
@@ -40,6 +39,7 @@ async def get_google_search_results(query):
             print(f"  Title: {item.get('title')}")
             print(f"  Link: {item.get('link')}")
             print(f"  Snippet: {item.get('snippet')}")
+
 
         return quart.Response(json.dumps(data), status=200, content_type='application/json')
     except Exception as e:
