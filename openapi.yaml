@@ -34,8 +34,7 @@ paths:
               schema:
                 type: object
                 description: The search results in JSON format.
-        '400':
-          description: Bad request, e.g., malformed request syntax, invalid request message framing, or deceptive request routing.
+
         '500':
           description: Server error, e.g., the server encountered a situation it doesn't know how to handle, such as an unexpected exception.
 

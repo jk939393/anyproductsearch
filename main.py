@@ -14,7 +14,7 @@ BASE_URL = "https://www.googleapis.com/customsearch/v1"
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 #pubmed
 
-@app.route("/google_search/<string:query>/<int:page>", methods=['GET'])
+@app.route("/google_search/<string:query>", methods=['GET'])
 async def get_google_search_results(query, page=1):
     try:
         print(f"Query: {query}")
