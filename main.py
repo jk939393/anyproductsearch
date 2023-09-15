@@ -13,17 +13,23 @@ BASE_URL = "https://www.googleapis.com/customsearch/v1"
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 #pubmed
-@app.route("/google_search/<string:query>", methods=['GET'])
-async def get_google_search_results(query):
+
+@app.route("/google_search/<string:query>/<int:page>", methods=['GET'])
+async def get_google_search_results(query, page=1):
     try:
-        # query = urllib.parse.quote(query)  # Remove this line
         print(f"Query: {query}")
+
+        # Calculate the start index for pagination
+        page = int(request.args.get('page', 1))
+
+        start_index = (page - 1) * 5 + 1
 
         response = requests.get(BASE_URL, params={
             "q": query,
             "cx": CX,
             "key": API_KEY,
-            "num": 5
+            "num": 5,
+            "start": start_index,
         })
 
         if response.status_code != 200:
@@ -33,13 +39,16 @@ async def get_google_search_results(query):
 
         data = response.json()
 
+        # Print total results
+        total_results = data.get("searchInformation", {}).get("totalResults", 0)
+        print(f"Total results found: {total_results}")
+
         # Print each result
         for i, item in enumerate(data.get('items', [])):
-            print(f"Result {i + 1}:")
+            print(f"Result {start_index + i}:")
             print(f"  Title: {item.get('title')}")
             print(f"  Link: {item.get('link')}")
             print(f"  Snippet: {item.get('snippet')}")
-
 
         return quart.Response(json.dumps(data), status=200, content_type='application/json')
     except Exception as e:
