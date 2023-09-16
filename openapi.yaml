@@ -27,6 +27,15 @@ paths:
           required: false
           description: The page number to fetch results for, with each page containing up to 5 results.
         - in: query
+          name: num
+          schema:
+            type: integer
+            default: 5
+            minimum: 1
+            maximum: 5
+          required: false
+          description: The page number to fetch results for, with each page containing up to 5 results.
+        - in: query
           name: start_date
           schema:
             type: string
