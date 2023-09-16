@@ -22,15 +22,32 @@ async def get_google_search_results(query, page=1):
         # Calculate the start index for pagination
         page = int(request.args.get('page', 1))
 
-        start_index = (page - 1) * 5 + 1
+        # Get the start_date and end_date from the request parameters
+        # start_date = request.args.get('start_date')
+        # end_date = request.args.get('end_date')
+        start_date = 20050101
+        end_date = 20100101
 
-        response = requests.get(BASE_URL, params={
+
+        start_index = (page - 1) * 5 + 1
+        formattedDate = f'date:r:{start_date}:{end_date}'
+        params = {
             "q": query,
             "cx": CX,
             "key": API_KEY,
-            "num": 2,
+            "num": 1,
             "start": start_index,
-        })
+            #"sort":"date:r:20050101:20101231"
+            "sort":formattedDate
+        }
+
+
+
+        # Print the full URL with all the parameters
+        full_url = f"{BASE_URL}?{'&'.join([f'{k}={v}' for k, v in params.items()])}"
+        print(f"Full URL: {full_url}")
+
+        response = requests.get(BASE_URL, params=params)
 
         if response.status_code != 200:
             print(f"Unexpected status code from Google: {response.status_code}")
@@ -40,7 +57,6 @@ async def get_google_search_results(query, page=1):
         data = response.json()
 
         # Print total results
-
         total_results = data.get('searchInformation', {}).get('totalResults', 0)
 
         result_data = []
@@ -65,32 +81,6 @@ async def get_google_search_results(query, page=1):
     except Exception as e:
         print(f"An error occurred: {e}")
         return quart.Response(f"An error occurred: {e}", status=500)
-
-
-# @app.route("/google_search/<string:query>", methods=['GET'])
-# async def get_google_search_results(query):
-#     try:
-#         query = urllib.parse.quote(query)
-#         print(f"Encoded query: {query}")
-#
-#         response = requests.get(BASE_URL, params={
-#             "q": query,
-#             "cx": CX,
-#             "key": API_KEY,
-#             "num": 10  # Set the number of results to return
-#
-#         })
-#
-#         if response.status_code != 200:
-#             print(f"Unexpected status code from Google: {response.status_code}")
-#             print(f"Response content: {response.text}")
-#             return quart.Response(response.text, status=response.status_code)
-#
-#         data = response.json()
-#         return quart.Response(json.dumps(data), status=200, content_type='application/json')
-#     except Exception as e:
-#         print(f"An error occurred: {e}")
-#         return quart.Response(f"An error occurred: {e}", status=500)
 
 
 
