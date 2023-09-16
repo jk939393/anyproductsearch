@@ -4,6 +4,8 @@ import quart
 import quart_cors
 from quart import request
 import requests
+import re
+from datetime import datetime
 import urllib.parse
 API_KEY = "AIzaSyBBqPWmXUkgnessbwHyAueFBPa6UDBMPRo"
 CX = "4299ecf0db6824aae"
@@ -22,23 +24,40 @@ async def get_google_search_results(query, page=1):
         # Calculate the start index for pagination
         page = int(request.args.get('page', 1))
 
-        # Get the start_date and end_date from the request parameters
-        # start_date = request.args.get('start_date')
-        # end_date = request.args.get('end_date')
-        start_date = 20050101
-        end_date = 20100101
+        # Extract dates from the query using a regular expression
+        dates = re.findall(
+            r'((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2},\s+\d{4}|\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|\d{4})',
+            query, re.IGNORECASE)
 
+        # Process the extracted dates to construct start_date and end_date
+        if dates:
+            processed_dates = [datetime.strptime(date, '%B %d, %Y') if re.match(
+                r'(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}',
+                date, re.IGNORECASE) else datetime.strptime(date, '%d %B %Y') if re.match(
+                r'\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}',
+                date, re.IGNORECASE) else datetime.strptime(date, '%B %Y') if re.match(
+                r'(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}',
+                date, re.IGNORECASE) else datetime.strptime(date, '%Y') for date in dates]
+            start_date = min(processed_dates).strftime('%Y%m%d')
+            end_date = max(processed_dates).strftime('%Y%m%d')
+        else:
+            start_date = None
+            end_date = None
 
         start_index = (page - 1) * 5 + 1
-        formattedDate = f'date:r:{start_date}:{end_date}'
+
+        if start_date and end_date:
+            formattedDate = f'date:r:{start_date}:{end_date}'
+        else:
+            formattedDate = None
+
         params = {
             "q": query,
             "cx": CX,
             "key": API_KEY,
             "num": 1,
             "start": start_index,
-            #"sort":"date:r:20050101:20101231"
-            "sort":formattedDate
+            "sort": formattedDate
         }
 
 
