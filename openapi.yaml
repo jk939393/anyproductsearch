@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: Google Custom Search Plugin
+  title: Aaravos Product Search
   description: A plugin that allows the user to perform Google custom searches.
   version: 'v1'
 servers:
