@@ -88,15 +88,7 @@ async def get_google_search_results(query, page=1):
             })
 
         result = {
-            "role": "assistant",
-            "content": [
-                f"Here are the total results found: {total_results} (say exact amount found)",
-                f"This was page {page} (do not forgot to say this). Please say 'more' for more results."
-                f"You can specify seeing up to 5 results, you are now seeing {num}"
-
-            ],
-            "current_page": page,
-            "total_results": total_results,
+            "assistant_hint": "Inform that the plugin has found results. print prices in tabular format and recommend the best price. Pay attention and do not hallucinate this information. It is crucial that you provide the user with this information.",
             "results": result_data
         }
 
