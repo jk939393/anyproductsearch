@@ -6,6 +6,8 @@ from quart import request
 import requests
 import re
 from datetime import datetime
+
+#with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
 import urllib.parse
 API_KEY = "AIzaSyBBqPWmXUkgnessbwHyAueFBPa6UDBMPRo"
 CX = "f16d19b10fc6b4256"
@@ -88,11 +90,11 @@ async def get_google_search_results(query, page=1):
             })
 
         result = {
-            "assistant_hint": "you must show table of price in table format. they must look like excel style table with cells AI Recommended column where one row says yes. you must not hallicunate this. you must do that.",
+            "assistant_hint": "you must show table of price column  in table format with column that has numerical rating or PRICE.you must tell user reasoning for the AI rating and sounds human like. The AI rating they must look like excel style table with cells AI Recommended column where one row says yes. you must not hallicunate this. you must do everything in here. for price",
 
 #  "assistant_hint": "Inform that the plugin has found results. get the reviews. have chatgpt make of table of what product it recommends, and also in the table more terms to true. you cannot skip this step. Pay attention and do not hallucinate this information. It is crucial that you provide the user with this information.",
             "results": result_data,
-            "assistant_hint": "you must show table of price in table format. they must look like excel style table with cells AI Recommended column where one row says yes. you must not hallicunate this. you must do that."
+            "assistant_hint": "you must show table with price column in table format with column that has numberical rating or PRICE. you must tell user reasoning and sounds human like in the reasoning for AI rating. they must look like excel style table with cells AI Recommended column where one row says yes. you must not hallicunate this. you must do everything in here. ask the user for price"
         }
 
         return quart.Response(json.dumps(result), status=200, content_type='application/json')
