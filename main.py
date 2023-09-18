@@ -88,7 +88,7 @@ async def get_google_search_results(query, page=1):
             })
 
         result = {
-            "assistant_hint": "Inform that the plugin has found results. print prices in tabular format and recommend the best price. Pay attention and do not hallucinate this information. It is crucial that you provide the user with this information.",
+            "assistant_hint": "Inform that the plugin has found results. have chatgpt make of table of what product it recommends, and also in the table more terms to true. you cannot skip this step. Pay attention and do not hallucinate this information. It is crucial that you provide the user with this information.",
             "results": result_data
         }
 
