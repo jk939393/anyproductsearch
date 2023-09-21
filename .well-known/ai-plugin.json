@@ -1,9 +1,9 @@
 {
     "schema_version": "v1",
-    "name_for_human": "Aaravos Product Search",
-    "name_for_model": "AaravosProductSearch",
-    "description_for_human": "Manage your TODO list. You can add, remove and view your TODOs.",
-    "description_for_model": "Plugin for managing a TODO list, you can add, remove and view your TODOs.",
+    "name_for_human": "AI-Powered Shopping Assistant",
+    "name_for_model": "ShopAssistantAI",
+    "description_for_human": "Elevate your shopping experience with our AI-powered assistant. Seamlessly add, remove, and view items on your shopping list.",
+    "description_for_model": "Plugin designed to enhance shopping tasks. Features include adding, removing, and viewing items on your list.",
     "auth": {
       "type": "none"
     },
@@ -14,5 +14,6 @@
     "logo_url": "https://github.com/jk939393/anyproductsearch/blob/master/logo.png?raw=true",
     "contact_email": "legal@example.com",
     "legal_info_url": "http://example.com/legal"
-  }
+}
+
   

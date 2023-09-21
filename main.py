@@ -9,8 +9,8 @@ from datetime import datetime
 
 #with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
 import urllib.parse
-API_KEY = "AIzaSyBBqPWmXUkgnessbwHyAueFBPa6UDBMPRo"
-CX = "f16d19b10fc6b4256"
+API_KEY = "AIzaSyBbvhM0tfQDlrI2ndRbZAN1YKBmwwStIrw"
+CX = "c5242d010cb334682"
 a=API_KEY
 b= CX
 BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
@@ -18,9 +18,11 @@ BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 #pubmed
 
+
 @app.route("/google_search/<string:query>", methods=['GET'])
 async def get_google_search_results(query, page=1):
     try:
+        query = f"{query} highly rated"
         print(f"Query: {query}")
 
         # Calculate the start index for pagination
@@ -83,19 +85,17 @@ async def get_google_search_results(query, page=1):
         result_data = []
         for i, item in enumerate(data.get('items', [])):
             result_data.append({
-                "index": start_index + i,
-                "title": item.get('title'),
+                "Recommendation": start_index + i,
+                "Category": item.get('title'),
                 "link": item.get('link'),
-                "snippet": item.get('snippet')
+
             })
 
         result = {
 
-            "assistant_hint": "you must show table of price column  in exel style table format with column that has numerical rating or PRICE.you must tell user reasoning for the AI rating and sounds human like. The AI rating they must look like excel style table with cells AI Recommended column where one row says yes. you must not hallicunate this. you must do everything in here. for price",
+            "assistant_hint": "Display an Excel-style table with columns for Product,Brand,  Numerical Rating, Price, and AI Recommended (with 'Recommended:Shop Now (with link)' or No). Ensure the table and font are colorful. Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.",
             "results": result_data,
 
-            #  "assistant_hint": "Inform that the plugin has found results. get the reviews. have chatgpt make of table of what product it recommends, and also in the table more terms to true. you cannot skip this step. Pay attention and do not hallucinate this information. It is crucial that you provide the user with this information.",
-            "assistant_hint": "you must show table with price column in excel style table format. You must  column that has numberical rating or PRICE. you must tell user reasoning and sounds human like in the reasoning for AI rating. they must look like excel style table with cells AI Recommended column where one row says yes. you must not hallicunate this. you must do everything in here. ask the user for price",
 
         }
 
