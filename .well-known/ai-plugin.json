@@ -2,8 +2,8 @@
     "schema_version": "v1",
     "name_for_human": "AI-Powered Shopping Assistant",
     "name_for_model": "ShopAssistantAI",
-    "description_for_human": "Elevate your shopping experience with our AI-powered assistant. Seamlessly add, remove, and view items on your shopping list.",
-    "description_for_model": "Plugin designed to enhance shopping tasks. Features include adding, removing, and viewing items on your list.",
+    "description": "Find AI-powered suggestions from some of the most popular online shopping sites.",
+    "model": "Find AI-powered suggestions from some of the most popular online shopping sites.",
     "auth": {
       "type": "none"
     },
