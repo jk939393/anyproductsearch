@@ -143,12 +143,12 @@ async def plugin_logo():
     filename = 'logo.png'
     return await quart.send_file(filename, mimetype='image/png')
 
-@app.get("/.well-known/ai-plugin.json")
-async def plugin_manifest():
-    host = request.headers['Host']
-    with open("./.well-known/ai-plugin.json") as f:
-        text = f.read()
-        return quart.Response(text, mimetype="text/json")
+# @app.get("/.well-known/ai-plugin.json")
+# async def plugin_manifest():
+#     host = request.headers['Host']
+#     with open("./.well-known/ai-plugin.json") as f:
+#         text = f.read()
+#         return quart.Response(text, mimetype="text/json")
 @app.route("/.well-known/ai-plugin.json", methods=['GET'])
 async def plugin_manifest():
     try:
