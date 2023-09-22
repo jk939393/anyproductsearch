@@ -6,6 +6,8 @@ from quart import request
 import requests
 import re
 from datetime import datetime
+import scrape1
+
 
 #with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
 import urllib.parse
@@ -24,10 +26,11 @@ async def get_google_search_results(query, page=1):
     try:
         query = f"{query} highly rated"
         print(f"Query: {query}")
-
+        price1 = scrape1.scrape_content()
+        print(str(price1))
         # Calculate the start index for pagination
         page = int(request.args.get('page', 1))
-        num = int(request.args.get('results',2))
+        num = int(request.args.get('results',1))
         # Extract dates from the query using a regular expression
         dates = re.findall(
             r'((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2},\s+\d{4}|\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|\d{4})',
@@ -79,6 +82,13 @@ async def get_google_search_results(query, page=1):
 
         data = response.json()
 
+        # Fetch the price1 value
+        price1,image_url = scrape1.scrape_content()
+
+        # Append price1 to each item in data['items']
+        for item in data.get('items', []):
+            item['Price'] = price1
+
         # Print total results
         total_results = data.get('searchInformation', {}).get('totalResults', 0)
 
@@ -88,14 +98,17 @@ async def get_google_search_results(query, page=1):
                 "Recommendation": start_index + i,
                 "Category": item.get('title'),
                 "link": item.get('link'),
-
+                "Price": item.get('Price')  # Get the price from the item
             })
+
+        print(result_data)
 
         result = {
 
             "assistant_hint": "Display an Excel-style table with columns for Product,Brand,  Numerical Rating, Price, and AI Recommended (with 'Recommended:Shop Now (with link)' or No). Ensure the table and font are colorful. Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.",
             "results": result_data,
-
+            "assistant_hint" "atached the price value f{price1} I gave you to all the items, as we are testing"
+            "assistant1": "attach price 1 to the price of everything in its excel box.do not forget this step",
 
         }
 
