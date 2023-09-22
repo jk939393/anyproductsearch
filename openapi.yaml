@@ -6,7 +6,7 @@ info:
 servers:
   - url: https://anyprd.anygpt.ai
 paths:
-  /shopping_search/{query}:
+  /google_search/{query}:
     get:
       operationId: get_shopping_results
       summary: Get Google Custom Search results

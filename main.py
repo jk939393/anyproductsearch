@@ -24,7 +24,7 @@ app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.c
 async def hello():
     return "Hello, World "
 
-@app.route("/shopping_search/<string:query>", methods=['GET'])
+@app.route("/google_search/<string:query>", methods=['GET'])
 async def get_shopping_results(query, page=1):
     try:
         query = f"{query} highly rated"
