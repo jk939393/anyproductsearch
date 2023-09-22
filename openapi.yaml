@@ -4,7 +4,7 @@ info:
   description: A plugin that allows the user to search for product with AI.
   version: 'v1'
 servers:
-  - url: https://anyproduct-243142ee7864.herokuapp.com/
+  - url: https://anypubmed.anygpt.ai
 paths:
   /shopping_search/{query}:
     get:
