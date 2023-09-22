@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/shopping_search/*"
+  from = "/google_search/*"
   to = "https://https://anyproduct-243142ee7864.herokuapp.com/google_search/:splat"
   status = 200
 [[redirects]]
