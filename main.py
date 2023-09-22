@@ -25,12 +25,9 @@ app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.c
 async def get_google_search_results(query, page=1):
     try:
         query = f"{query} highly rated"
-        print(f"Query: {query}")
-        price1 = scrape1.scrape_content()
-        print(str(price1))
         # Calculate the start index for pagination
         page = int(request.args.get('page', 1))
-        num = int(request.args.get('results',1))
+        num = int(request.args.get('results',3))
         # Extract dates from the query using a regular expression
         dates = re.findall(
             r'((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2},\s+\d{4}|\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|\d{4})',
@@ -82,12 +79,15 @@ async def get_google_search_results(query, page=1):
 
         data = response.json()
 
-        # Fetch the price1 value
-        price1,image_url = scrape1.scrape_content()
+        # Extract the list of URLs from the data
+        urls = [item.get('link') for item in data.get('items', []) if item.get('link')]
 
-        # Append price1 to each item in data['items']
-        for item in data.get('items', []):
-            item['Price'] = price1
+        # Get the scraped results
+        scraped_results = scrape1.scrape_content(urls)
+
+        # Append the scraped results to the respective items in the data
+        for item, (price, image_url) in zip(data.get('items', []), scraped_results):
+            item['Price'] = price
             item['Image'] = image_url
         # Print total results
         total_results = data.get('searchInformation', {}).get('totalResults', 0)
