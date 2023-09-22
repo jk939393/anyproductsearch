@@ -20,6 +20,9 @@ BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 #pubmed
 
+@app.route("/")
+async def hello():
+    return "Hello, World "
 
 @app.route("/shopping_search/<string:query>", methods=['GET'])
 async def get_shopping_results(query, page=1):
