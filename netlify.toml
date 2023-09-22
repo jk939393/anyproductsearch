@@ -1,10 +1,10 @@
 [[redirects]]
   from = "/shopping_search/*"
-  to = "https://https://anyproduct-243142ee7864.herokuapp.com//google_search/:splat"
+  to = "https://https://anyproduct-243142ee7864.herokuapp.com/google_search/:splat"
   status = 200
 [[redirects]]
   from = "/.well-known/*"
-  to = "https://https://anyproduct-243142ee7864.herokuapp.com/.com/.well-known/:splat"
+  to = "https://https://anyproduct-243142ee7864.herokuapp.com/.well-known/:splat"
   status = 200
 
 [[headers]]
