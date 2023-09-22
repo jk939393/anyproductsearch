@@ -4,11 +4,11 @@ info:
   description: A plugin that allows the user to search for product with AI.
   version: 'v1'
 servers:
-  - url: http://localhost:5003
+  - url: https://anyprd.anygpt.ai
 paths:
-  /google_search/{query}:
+  /shopping_search/{query}:
     get:
-      operationId: get_google_search_results
+      operationId: get_shopping_results
       summary: Get Google Custom Search results
       description: Retrieves search results from Google Custom Search based on the query parameter.
       parameters:

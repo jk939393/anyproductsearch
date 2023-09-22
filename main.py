@@ -4,7 +4,9 @@ import quart
 import quart_cors
 from quart import request
 import requests
+import os
 import re
+import httpx
 from datetime import datetime
 
 #with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
@@ -19,8 +21,8 @@ app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.c
 #pubmed
 
 
-@app.route("/google_search/<string:query>", methods=['GET'])
-async def get_google_search_results(query, page=1):
+@app.route("/shopping_search/<string:query>", methods=['GET'])
+async def get_shopping_results(query, page=1):
     try:
         query = f"{query} highly rated"
         print(f"Query: {query}")
@@ -111,13 +113,30 @@ async def plugin_logo():
     filename = 'logo.png'
     return await quart.send_file(filename, mimetype='image/png')
 
-@app.get("/.well-known/ai-plugin.json")
+# @app.get("/.well-known/ai-plugin.json")
+# async def plugin_manifest():
+#     host = request.headers['Host']
+#     with open("./.well-known/ai-plugin.json") as f:
+#         text = f.read()
+#         return quart.Response(text, mimetype="text/json")
+@app.route("/.well-known/ai-plugin.json", methods=['GET'])
 async def plugin_manifest():
-    host = request.headers['Host']
-    with open("./.well-known/ai-plugin.json") as f:
-        text = f.read()
-        return quart.Response(text, mimetype="text/json")
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get("https://anypubmed.anygpt.ai/.well-known/ai-plugin.json")
+        print(f"Request headers: {request.headers}")
+        print(f"Current working directory: {os.getcwd()}")
 
+        print(f"Received response: {response.text}")  # Print the response
+
+        if response.status_code == 200:
+            json_data = response.text  # Get the JSON as a string
+            return Response(json_data, mimetype="application/json")
+        else:
+            return f"Failed to fetch data. Status code: {response.status_code}", 400
+    except Exception as e:
+        print(f"An error occurred: {e}")  # Print the exception
+        return str(e), 500
 @app.get("/openapi.yaml")
 async def openapi_spec():
     host = request.headers['Host']
@@ -125,8 +144,10 @@ async def openapi_spec():
         text = f.read()
         return quart.Response(text, mimetype="text/yaml")
 
+port = int(os.environ.get("PORT", 5000))
+
 def main():
-    app.run(debug=True, host="0.0.0.0", port=5003)
+    app.run(debug=True, host="0.0.0.0", port=port)
 
 if __name__ == "__main__":
     main()
