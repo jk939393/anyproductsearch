@@ -88,7 +88,7 @@ async def get_google_search_results(query, page=1):
         # Append price1 to each item in data['items']
         for item in data.get('items', []):
             item['Price'] = price1
-
+            item['Image'] = image_url
         # Print total results
         total_results = data.get('searchInformation', {}).get('totalResults', 0)
 
@@ -98,7 +98,9 @@ async def get_google_search_results(query, page=1):
                 "Recommendation": start_index + i,
                 "Category": item.get('title'),
                 "link": item.get('link'),
-                "Price": item.get('Price')  # Get the price from the item
+                "Price": item.get('Price'),  # Get the price from the item
+                "Image": item.get('Image')  # Get the price from the item
+
             })
 
         print(result_data)
