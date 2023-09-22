@@ -15,7 +15,7 @@ API_KEY = "AIzaSyBbvhM0tfQDlrI2ndRbZAN1YKBmwwStIrw"
 CX = "c5242d010cb334682"
 a=API_KEY
 b= CX
-BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
+BASE_URL = "https://www.googleapis.com/customsearch/v1/"
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 #pubmed
@@ -27,7 +27,7 @@ async def hello():
 @app.route("/google_search/<string:query>", methods=['GET'])
 async def get_shopping_results(query, page=1):
     try:
-        query = f"{query} highly rated"
+        query = f"{query} highly rated product"
         print(f"Query: {query}")
 
         # Calculate the start index for pagination
