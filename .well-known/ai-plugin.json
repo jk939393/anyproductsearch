@@ -2,8 +2,8 @@
     "schema_version": "v1",
     "name_for_human": "AI-Powered Shopping Assistant",
     "name_for_model": "ShopAssistantAI",
-    "description": "Find AI-powered suggestions from some of the most popular online shopping sites.",
-    "model": "Find AI-powered suggestions from some of the most popular online shopping sites.",
+    "description_for_human": "Find AI-powered suggestions from some of the most popular online shopping sites.",
+    "description_for_model": "Find AI-powered suggestions from some of the most popular online shopping sites.",
     "auth": {
       "type": "none"
     },
