@@ -1,8 +1,8 @@
 {
     "schema_version": "v1",
-    "name_for_human": "AI Shopping Search",
+    "name_for_human": "AI Clothing Search",
     "name_for_model": "ShopAssistantAI",
-    "description_for_human": "Find AI-powered suggestions from some of the most popular online shopping sites.",
+    "description_for_human": "Shop for popular brands like SHEIN with more to come!.",
     "description_for_model": "Find AI-powered suggestions from some of the most popular online shopping sites.",
     "auth": {
       "type": "none"
