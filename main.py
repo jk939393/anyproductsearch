@@ -97,7 +97,10 @@ async def get_shopping_results(query, page=1):
             })
 
         result = {
-             "assistant_hint1": "Display an Excel-style table with columns for Product,Brand,  Numerical Rating, Price, and AI Recommended (with 'Recommended:Shop Now' or No) ( ai commened for only one item). Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.",
+             "assistant_hint0":f"Here are the total results found: {total_results} (say exact amount found)",
+             "assistant_hint0.5": f"This was page {page} (do not forget to say this). Please say 'more' for more results.",
+
+            "assistant_hint1": "Display an Excel-style table with columns for Product,Brand,  Numerical Rating, Price, and AI Recommended (with 'Recommended:Shop Now' or No) ( ai commened for only one item). Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.",
             #
              "assistant_hint": "Display an Excel-style table with columns for Product,Brand,  Numerical Rating, Price, and AI Recommended (with 'Recommended:Shop Now ' or No ( ai commened for only one item). Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.",
              "results": result_data,
