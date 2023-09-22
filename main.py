@@ -8,7 +8,7 @@ import os
 import re
 import httpx
 from datetime import datetime
-
+import scrape1
 #with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
 import urllib.parse
 API_KEY = "AIzaSyBbvhM0tfQDlrI2ndRbZAN1YKBmwwStIrw"
@@ -24,15 +24,28 @@ app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.c
 async def hello():
     return "Hello, World "
 
+
+
+
+#with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
+import urllib.parse
+API_KEY = "AIzaSyBbvhM0tfQDlrI2ndRbZAN1YKBmwwStIrw"
+CX = "c5242d010cb334682"
+a=API_KEY
+b= CX
+BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
+
+app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
+#pubmed
+
+
 @app.route("/google_search/<string:query>", methods=['GET'])
-async def get_shopping_results(query, page=1):
+async def get_google_search_results(query, page=1):
     try:
         query = f"{query} highly rated"
-        print(f"Query: {query}")
-
         # Calculate the start index for pagination
         page = int(request.args.get('page', 1))
-        num = int(request.args.get('results',5))
+        num = int(request.args.get('results',3))
         # Extract dates from the query using a regular expression
         dates = re.findall(
             r'((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2},\s+\d{4}|\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|\d{4})',
@@ -84,6 +97,16 @@ async def get_shopping_results(query, page=1):
 
         data = response.json()
 
+        # Extract the list of URLs from the data
+        urls = [item.get('link') for item in data.get('items', []) if item.get('link')]
+
+        # Get the scraped results
+        scraped_results = scrape1.scrape_content(urls)
+
+        # Append the scraped results to the respective items in the data
+        for item, (price, image_url) in zip(data.get('items', []), scraped_results):
+            item['Price'] = price
+            item['Image'] = image_url
         # Print total results
         total_results = data.get('searchInformation', {}).get('totalResults', 0)
 
@@ -93,16 +116,19 @@ async def get_shopping_results(query, page=1):
                 "Recommendation": start_index + i,
                 "Category": item.get('title'),
                 "link": item.get('link'),
+                "Price": item.get('Price'),  # Get the price from the item
+                "Image": item.get('Image')  # Get the price from the item
 
             })
 
+        print(result_data)
+
         result = {
-            #  "assistant_hint0":f"Here are the total results found: {total_results} (say exact amount found)",
-            #  "assistant_hint0.5": f"This was page {page} (do not forget to say this). Please say 'more' for more results.",
-            #
-            # "assistant_hint1": "Display an Excel-style table with columns for Product,Brand,  Numerical Rating, Price, and AI Recommended (with 'Recommended:Shop Now' or No) ( ai commened for only one item). Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.",
-            # #
-             "results": result_data,
+
+            "assistant_hint": "Display an Excel-style table with columns for Product name and image. You must have product name under image,Brand, and linK and Price!. Must also have and AI Recommended (with 'Recommended:Shop Now (with link)' or No). Ensure the table and font are colorful. Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.",
+            "results": result_data,
+            "assistant_hint" "atached the price value f{price1} I gave you to all the items, as we are testing"
+            "assistant1": "attach price 1 to the price of everything in its excel box.do not forget this step",
 
         }
 
@@ -110,7 +136,6 @@ async def get_shopping_results(query, page=1):
     except Exception as e:
         print(f"An error occurred: {e}")
         return quart.Response(f"An error occurred: {e}", status=500)
-
 
 
 @app.get("/logo.png")
