@@ -8,7 +8,7 @@ servers:
 paths:
   /google_search/{query}:
     get:
-      operationId: get_google_search_results
+      operationId: get_shopping_results
       summary: Get Google Custom Search results
       description: Retrieves search results from Google Custom Search based on the query parameter.
       parameters:
