@@ -21,9 +21,11 @@ def scrape_content(urls):
             soup = BeautifulSoup(response.content, 'html.parser')
 
             # Extracting the labels from the provided div
-            size_div = soup.select_one('.product-intro__size-radio')
+            size_div = soup.select_one(
+                '.product-intro__size-radio.product-intro__size-radio_active.product-intro__size-radio_soldout')
             aria_label = size_div['aria-label'] if size_div else "Aria label not found!"
-            size_text = size_div.select_one('.product-intro__size-radio-inner').text if size_div else "Size text not found!"
+            size_text = size_div.select_one(
+                '.product-intro__size-radio-inner').text if size_div else "Size text not found!"
 
             # Try to get the regular price first
             price_div = soup.select_one('.product-intro__head-mainprice .original.from span')
@@ -61,4 +63,3 @@ for url, (price, image_url, aria_label, size_text) in zip(urls, scraped_results)
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     scrape_content(urls)
-
