@@ -8,14 +8,19 @@ import user_agents_file
 logging.basicConfig(level=logging.DEBUG)
 UsrAgent = user_agents_file.USER_AGENTS
 
+import time
+
+session = requests.Session()
+
+
 def scrape_content(urls):
     results = []
-
     for url in urls:
         headers = {
             "User-Agent": random.choice(UsrAgent)
         }
 
+        time.sleep(random.uniform(1, 5))  # Rate limiting
 
     results = []
 
