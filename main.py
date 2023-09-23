@@ -127,13 +127,18 @@ async def get_google_search_results(query, page=1):
 
         print(result_data)
 
+        messages = []
+        messages.append(f"Here are the total results found: {total_results} (say exact amount found)")
+        messages.append(f"This was page {page} (do not forget to say this). Please say 'more' for more results.")
+        messages.append(
+            f"You can specify seeing up to {num} results. You are now seeing {min(num, len(result_data))} results.")
         result = {
 
             "assistant_hint": """Display an Excel-style table with columns for Product name and image and  product sizes (product results should iterate horizontally not vertically). 
             You must have product name under image,Brand,  and Price!. Must also have and AI Recommended column (with 'Trending: Shop Now (with smiley emojis)' for one of the prodcut (with link)' and just the link for the nonrecommended).  "
             Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.""",
             "results": result_data,
-
+            "assistant_hint2": "do not ignore these" + messages,
         }
 
         return quart.Response(json.dumps(result), status=200, content_type='application/json')
