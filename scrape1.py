@@ -1,61 +1,55 @@
-import requests
 from bs4 import BeautifulSoup
 import logging
 import random
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import os
 
 import user_agents_file
 
 logging.basicConfig(level=logging.DEBUG)
 UsrAgent = user_agents_file.USER_AGENTS
 
-import time
-
-session = requests.Session()
-
-
 def scrape_content(urls):
     results = []
+
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+
+    # Initialize Selenium Chrome driver
+    chromedriver_path = os.environ.get("CHROMEDRIVER_PATH")
+    if chromedriver_path:
+        driver = webdriver.Chrome(executable_path=chromedriver_path, options=chrome_options)
+    else:
+        driver = webdriver.Chrome(options=chrome_options)
     for url in urls:
-        headers = {
-            "User-Agent": random.choice(UsrAgent)
-        }
+        driver.get(url)
+        #time.sleep(random.uniform(1, 5))  # Rate limiting
 
-        time.sleep(random.uniform(1, 5))  # Rate limiting
+        # Fetch page source and parse it with BeautifulSoup
+        page_source = driver.page_source
+        soup = BeautifulSoup(page_source, 'html.parser')
 
-    results = []
+        # Extracting the sizes
+        size_divs = soup.select('.product-intro__size-radio .product-intro__size-radio-inner')
+        sizes = [div.text for div in size_divs]
 
-    for url in urls:
-        try:
-            response = requests.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
+        # Extracting the price
+        price_div = soup.select_one('.product-intro__head-mainprice .original.from span')
+        if not price_div:
+            price_div = soup.select_one('.discount.from span')
+        price = price_div.text if price_div else "Price content not found!"
 
-            logging.debug(f"Status code for {url}: {response.status_code}")
-            logging.debug(f"Content Snippet for {url}: {response.content[:1000].decode('utf-8')}")
+        # Extracting the image URL
+        image_div = soup.select_one('.crop-image-container')
+        image_url = image_div['data-before-crop-src'] if image_div else "Image content not found!"
 
-            soup = BeautifulSoup(response.content, 'html.parser')
+        results.append((price, image_url, sizes))
 
-            # Extracting the sizes
-            size_divs = soup.select('.product-intro__size-radio .product-intro__size-radio-inner')
-            sizes = [div.text for div in size_divs]
-
-            # Extracting the price
-            price_div = soup.select_one('.product-intro__head-mainprice .original.from span')
-            if not price_div:
-                price_div = soup.select_one('.discount.from span')
-            price = price_div.text if price_div else "Price content not found!"
-            logging.debug(f"Price div content for {url}: {price_div}")
-
-            # Extracting the image URL
-            image_div = soup.select_one('.crop-image-container')
-            image_url = image_div['data-before-crop-src'] if image_div else "Image content not found!"
-            logging.debug(f"Image div content for {url}: {image_div}")
-
-            results.append((price, image_url, sizes))
-
-        except requests.RequestException as e:
-            logging.error(f"Error fetching the content for {url}: {e}")
-            results.append(("Error", "Error", []))
-
+    driver.quit()
     return results
 
 # Test the function
