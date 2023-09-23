@@ -9,11 +9,11 @@
     },
     "api": {
       "type": "openapi",
-      "url": "https://anyprd.anygpt.ai/openapi.yaml"
+      "url": "https://anyprod.anygpt.ai/openapi.yaml"
     },
     "logo_url": "https://raw.githubusercontent.com/jk939393/anyproductsearch/Prod-AnyProductSearch/logo.png?token=GHSAT0AAAAAACHTJDAAVZKCW3HYTS5FIDCIZINSBTQ",
     "contact_email": "researchbutler@anygpt.ai",
-    "legal_info_url": "http://www.anyprd.anygpt.ai/legal"
+    "legal_info_url": "http://www.anyprod.anygpt.ai/legal"
 }
 
   
