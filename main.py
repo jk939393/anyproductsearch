@@ -45,7 +45,7 @@ async def get_google_search_results(query, page=1):
         query = f"{query} highly rated for adults"
         # Calculate the start index for pagination
         page = int(request.args.get('page', 1))
-        num = int(request.args.get('results',5))
+        num = int(request.args.get('results',3))
         # Extract dates from the query using a regular expression
         dates = re.findall(
             r'((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2},\s+\d{4}|\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|\d{4})',
@@ -158,7 +158,7 @@ async def plugin_manifest():
     with open("./.well-known/ai-plugin.json") as f:
         text = f.read()
         return quart.Response(text, mimetype="text/json")
-    
+
 # @app.route("/.well-known/ai-plugin.json", methods=['GET'])
 # async def plugin_manifest():
 #     try:
