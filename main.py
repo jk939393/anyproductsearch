@@ -132,9 +132,10 @@ async def get_google_search_results(query, page=1):
         messages.append(
             f"You can specify seeing up to {num} results. You are now seeing {min(num, len(result_data))} results.")
         result = {
-
-            "assistant_hint": """Display an Excel-style table with columns for Product name and image and  product sizes (product results should iterate horizontally not vertically). 
-            You must have product name under image,Brand,  and Price!. only one set of rows/ columns needs link Must also have and AI Recommended column (with 'Trending: Shop Now (with smiley emojis)' for one of the prodcut (with link)' and just the link for the nonrecommended).  "
+            "assistant_hint": """Display an Excel-style table with columns for Product name, Image, and Product Sizes. 
+            Product results should iterate vertically. 
+            You must have the product name under the image, and Price. Only one set of rows/columns needs a link. 
+            Must also have an 'AI Recommended' column (with 'Trending: Shop Now 😊' for one of the products (with link) and just the link for the non-recommended).
             Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.""",
             "results": result_data,
             "assistant_hint2": messages,
