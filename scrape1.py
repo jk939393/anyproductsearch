@@ -29,21 +29,27 @@ def scrape_content(urls):
 
             soup = BeautifulSoup(response.content, 'html.parser')
 
+            # Extracting the sizes
+            size_divs = soup.select('.product-intro__size-radio .product-intro__size-radio-inner')
+            sizes = [div.text for div in size_divs]
+
+            # Extracting the price
             price_div = soup.select_one('.product-intro__head-mainprice .original.from span')
             if not price_div:
                 price_div = soup.select_one('.discount.from span')
             price = price_div.text if price_div else "Price content not found!"
             logging.debug(f"Price div content for {url}: {price_div}")
 
+            # Extracting the image URL
             image_div = soup.select_one('.crop-image-container')
             image_url = image_div['data-before-crop-src'] if image_div else "Image content not found!"
             logging.debug(f"Image div content for {url}: {image_div}")
 
-            results.append((price, image_url))
+            results.append((price, image_url, sizes))
 
         except requests.RequestException as e:
             logging.error(f"Error fetching the content for {url}: {e}")
-            results.append(("Error", "Error"))
+            results.append(("Error", "Error", []))
 
     return results
 
@@ -51,10 +57,11 @@ def scrape_content(urls):
 urls = ["https://us.shein.com/SHEIN-EZwear-High-Waist-Flare-Leg-Pants-p-11805842-cat-1740.html?mallCode=1"]
 scraped_results = scrape_content(urls)
 
-for url, (price, image_url) in zip(urls, scraped_results):
+for url, (price, image_url, sizes) in zip(urls, scraped_results):
     logging.info(f"URL: {url}")
     logging.info(f"Price: {price}")
     logging.info(f"Image URL: {image_url}")
+    logging.info(f"Sizes: {', '.join(sizes)}")
 
 if __name__ == '__main__':
     scrape_content(urls)
