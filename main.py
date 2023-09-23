@@ -80,15 +80,18 @@ async def get_google_search_results(query, page=1):
         data = response.json()
 
         # Extract the list of URLs from the data
+        # Extract the list of URLs from the data
         urls = [item.get('link') for item in data.get('items', []) if item.get('link')]
 
         # Get the scraped results
-        scraped_results = scrape1.scrape_content(urls)
+        scraped_results = scrape1.scrape_content(urls)  # Assuming scrape_content is the function we modified earlier
 
         # Append the scraped results to the respective items in the data
-        for item, (price, image_url) in zip(data.get('items', []), scraped_results):
+        for item, (price, image_url, sizes) in zip(data.get('items', []), scraped_results):
             item['Price'] = price
             item['Image'] = image_url
+            item['Sizes'] = sizes  # Adding the sizes to the item
+
         # Print total results
         total_results = data.get('searchInformation', {}).get('totalResults', 0)
 
@@ -99,15 +102,15 @@ async def get_google_search_results(query, page=1):
                 "Category": item.get('title'),
                 "link": item.get('link'),
                 "Price": item.get('Price'),  # Get the price from the item
-                "Image": item.get('Image')  # Get the price from the item
-
+                "Image": item.get('Image'),  # Get the image URL from the item
+                "Sizes": ', '.join(item.get('Sizes', []))  # Get the sizes from the item and join them as a string
             })
 
         print(result_data)
 
         result = {
 
-            "assistant_hint": """Display an Excel-style table with columns for Product name and image (results must be side bv side). 
+            "assistant_hint": """Display an Excel-style table with columns for Product name and image and size (results must be side bv side). 
             You must have product name under image,Brand, and linK and Price!. Must also have and AI Recommended column (with 'Recommended:Shop Now' for one of the prodcut (with link)' or No). Ensure the table and font are colorful. "
             Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.""",
             "results": result_data,
