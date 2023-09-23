@@ -103,10 +103,14 @@ async def get_google_search_results(query, page=1):
         # Get the scraped results
         scraped_results = scrape1.scrape_content(urls)
 
+        scraped_results = scrape1.scrape_content(urls)  # Assuming scrape_content is the function we modified earlier
+
         # Append the scraped results to the respective items in the data
-        for item, (price, image_url) in zip(data.get('items', []), scraped_results):
+        for item, (price, image_url, sizes) in zip(data.get('items', []), scraped_results):
             item['Price'] = price
             item['Image'] = image_url
+            item['Sizes'] = sizes  # Adding the sizes to the item
+
         # Print total results
         total_results = data.get('searchInformation', {}).get('totalResults', 0)
 
@@ -117,8 +121,8 @@ async def get_google_search_results(query, page=1):
                 "Category": item.get('title'),
                 "link": item.get('link'),
                 "Price": item.get('Price'),  # Get the price from the item
-                "Image": item.get('Image')  # Get the price from the item
-
+                "Image": item.get('Image'),  # Get the image URL from the item
+                "Sizes": ', '.join(item.get('Sizes', []))  # Get the sizes from the item and join them as a string
             })
 
         print(result_data)
