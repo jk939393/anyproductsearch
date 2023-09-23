@@ -1,10 +1,10 @@
 [[redirects]]
   from = "/google_search/*"
-  to = "https://anyproduct-243142ee7864.herokuapp.com/google_search/:splat"
+  to = "https://anypr-17cbd4b4b7d1.herokuapp.com/google_search/:splat"
   status = 200
 [[redirects]]
   from = "/.well-known/*"
-  to = "https://anyproduct-243142ee7864.herokuapp.com/.well-known/:splat"
+  to = "https://anypr-17cbd4b4b7d1.herokuapp.com/.well-known/:splat"
   status = 200
 
 [[headers]]
