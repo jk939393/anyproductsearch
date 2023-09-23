@@ -24,7 +24,7 @@ app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.c
 @app.route("/google_search/<string:query>", methods=['GET'])
 async def get_google_search_results(query, page=1):
     try:
-        query = f"{query} highly rated for adults"
+        query = f"{query} -kids -children highly rated for adults"
         # Calculate the start index for pagination
         page = int(request.args.get('page', 1))
         num = int(request.args.get('results',3))
