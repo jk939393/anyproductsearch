@@ -2,7 +2,11 @@ import requests
 from bs4 import BeautifulSoup
 import logging
 import random
+
+import user_agents_file
+
 logging.basicConfig(level=logging.DEBUG)
+UsrAgent = user_agents_file.USER_AGENTS
 
 def scrape_content(urls):
     results = []
