@@ -22,7 +22,7 @@ def scrape_content(urls):
     # Initialize Selenium Chrome driver
     chromedriver_path = os.environ.get("CHROMEDRIVER_PATH")
     if chromedriver_path:
-        driver = webdriver.Chrome(executable_path=chromedriver_path, options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
     else:
         driver = webdriver.Chrome(options=chrome_options)
     for url in urls:
