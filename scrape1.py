@@ -1,147 +1,52 @@
-import json
-
-import quart
-import quart_cors
-from quart import request
 import requests
-import re
-from datetime import datetime
-import scrape1
+from bs4 import BeautifulSoup
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 
-#with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
-import urllib.parse
-API_KEY = "AIzaSyBbvhM0tfQDlrI2ndRbZAN1YKBmwwStIrw"
-CX = "c5242d010cb334682"
-a=API_KEY
-b= CX
-BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
+def scrape_content(urls):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
 
-app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
-#pubmed
+    results = []
 
+    for url in urls:
+        try:
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
 
-@app.route("/google_search/<string:query>", methods=['GET'])
-async def get_google_search_results(query, page=1):
-    try:
-        query = f"{query} highly rated"
-        # Calculate the start index for pagination
-        page = int(request.args.get('page', 1))
-        num = int(request.args.get('results',3))
-        # Extract dates from the query using a regular expression
-        dates = re.findall(
-            r'((?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2},\s+\d{4}|\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}|\d{4})',
-            query, re.IGNORECASE)
+            logging.debug(f"Status code for {url}: {response.status_code}")
+            logging.debug(f"Content Snippet for {url}: {response.content[:1000].decode('utf-8')}")
 
-        # Process the extracted dates to construct start_date and end_date
-        if dates:
-            processed_dates = [datetime.strptime(date, '%B %d, %Y') if re.match(
-                r'(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}',
-                date, re.IGNORECASE) else datetime.strptime(date, '%d %B %Y') if re.match(
-                r'\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}',
-                date, re.IGNORECASE) else datetime.strptime(date, '%B %Y') if re.match(
-                r'(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}',
-                date, re.IGNORECASE) else datetime.strptime(date, '%Y') for date in dates]
-            start_date = min(processed_dates).strftime('%Y%m%d')
-            end_date = max(processed_dates).strftime('%Y%m%d')
-        else:
-            start_date = None
-            end_date = None
+            soup = BeautifulSoup(response.content, 'html.parser')
 
-        start_index = (page - 1) * 5 + 1
+            price_div = soup.select_one('.product-intro__head-mainprice .original.from span')
+            if not price_div:
+                price_div = soup.select_one('.discount.from span')
+            price = price_div.text if price_div else "Price content not found!"
+            logging.debug(f"Price div content for {url}: {price_div}")
 
-        if start_date and end_date:
-            formattedDate = f'date:r:{start_date}:{end_date}'
-        else:
-            formattedDate = None
+            image_div = soup.select_one('.crop-image-container')
+            image_url = image_div['data-before-crop-src'] if image_div else "Image content not found!"
+            logging.debug(f"Image div content for {url}: {image_div}")
 
-        params = {
-            "q": query,
-            "cx": CX,
-            "key": API_KEY,
-            "num": num,
-            "start": start_index,
-            "sort": formattedDate
-        }
+            results.append((price, image_url))
 
+        except requests.RequestException as e:
+            logging.error(f"Error fetching the content for {url}: {e}")
+            results.append(("Error", "Error"))
 
+    return results
 
-        # Print the full URL with all the parameters
-        full_url = f"{BASE_URL}?{'&'.join([f'{k}={v}' for k, v in params.items()])}"
-        print(f"Full URL: {full_url}")
+# Test the function
+urls = ["https://us.shein.com/SHEIN-EZwear-High-Waist-Flare-Leg-Pants-p-11805842-cat-1740.html?mallCode=1"]
+scraped_results = scrape_content(urls)
 
-        response = requests.get(BASE_URL, params=params)
+for url, (price, image_url) in zip(urls, scraped_results):
+    logging.info(f"URL: {url}")
+    logging.info(f"Price: {price}")
+    logging.info(f"Image URL: {image_url}")
 
-        if response.status_code != 200:
-            print(f"Unexpected status code from Google: {response.status_code}")
-            print(f"Response content: {response.text}")
-            return quart.Response(response.text, status=response.status_code)
-
-        data = response.json()
-
-        # Extract the list of URLs from the data
-        urls = [item.get('link') for item in data.get('items', []) if item.get('link')]
-
-        # Get the scraped results
-        scraped_results = scrape1.scrape_content(urls)
-
-        # Append the scraped results to the respective items in the data
-        for item, (price, image_url) in zip(data.get('items', []), scraped_results):
-            item['Price'] = price
-            item['Image'] = image_url
-        # Print total results
-        total_results = data.get('searchInformation', {}).get('totalResults', 0)
-
-        result_data = []
-        for i, item in enumerate(data.get('items', [])):
-            result_data.append({
-                "Recommendation": start_index + i,
-                "Category": item.get('title'),
-                "link": item.get('link'),
-                "Price": item.get('Price'),  # Get the price from the item
-                "Image": item.get('Image')  # Get the price from the item
-
-            })
-
-        print(result_data)
-
-        result = {
-
-            "assistant_hint": "Display an Excel-style table with columns for Product name and image. You must have product name under image,Brand, and linK and Price!. Must also have and AI Recommended (with 'Recommended:Shop Now (with link)' or No). Ensure the table and font are colorful. Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.",
-            "results": result_data,
-            "assistant_hint" "atached the price value f{price1} I gave you to all the items, as we are testing"
-            "assistant1": "attach price 1 to the price of everything in its excel box.do not forget this step",
-
-        }
-
-        return quart.Response(json.dumps(result), status=200, content_type='application/json')
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return quart.Response(f"An error occurred: {e}", status=500)
-
-
-
-@app.get("/logo.png")
-async def plugin_logo():
-    filename = 'logo.png'
-    return await quart.send_file(filename, mimetype='image/png')
-
-@app.get("/.well-known/ai-plugin.json")
-async def plugin_manifest():
-    host = request.headers['Host']
-    with open("./.well-known/ai-plugin.json") as f:
-        text = f.read()
-        return quart.Response(text, mimetype="text/json")
-
-@app.get("/openapi.yaml")
-async def openapi_spec():
-    host = request.headers['Host']
-    with open("openapi.yaml") as f:
-        text = f.read()
-        return quart.Response(text, mimetype="text/yaml")
-
-def main():
-    app.run(debug=True, host="0.0.0.0", port=5003)
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    scrape_content(urls)
