@@ -1,15 +1,19 @@
 import requests
 from bs4 import BeautifulSoup
+import requests
+import random
 
+import user_agents
+
+UsrAgent = user_agents.USER_AGENTS
 
 def scrape_content(urls):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    }
-
     results = []
 
     for url in urls:
+        headers = {
+            "User-Agent": random.choice(UsrAgent)
+        }
         try:
             response = requests.get(url, headers=headers, timeout=10)
             response.raise_for_status()
