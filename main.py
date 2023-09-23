@@ -130,7 +130,7 @@ async def get_google_search_results(query, page=1):
         result = {
 
             "assistant_hint": """Display an Excel-style table with columns for Product name and image and  product sizes (product results should iterate horizontally not vertically). 
-            You must have product name under image,Brand,  and Price!. Must also have and AI Recommended column (with 'Recommended:Shop Now' for one of the prodcut (with link)' and just the link for the nonrecommended).  "
+            You must have product name under image,Brand,  and Price!. Must also have and AI Recommended column (with 'Trending: Shop Now (with smiley emojis)' for one of the prodcut (with link)' and just the link for the nonrecommended).  "
             Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.""",
             "results": result_data,
 
