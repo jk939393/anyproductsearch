@@ -59,6 +59,7 @@ def scrape_content(urls):
         short_image_url = s.tinyurl.short(image_url)
 
         results.append((price, short_image_url, sizes))
+        print(short_image_url)
 
     driver.quit()
     return results

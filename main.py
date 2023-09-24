@@ -9,6 +9,7 @@ import re
 import httpx
 from datetime import datetime
 import scrape1
+import pyshorteners
 #with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
 import urllib.parse
 API_KEY = "AIzaSyBbvhM0tfQDlrI2ndRbZAN1YKBmwwStIrw"
@@ -104,7 +105,8 @@ async def get_google_search_results(query, page=1):
 
         scraped_results = scrape1.scrape_content(urls)  # Assuming scrape_content is the function we modified earlier
 
-        # Append the scraped results to the respective items in the data
+        s = pyshorteners.Shortener()
+
         for item, (price, image_url, sizes) in zip(data.get('items', []), scraped_results):
             item['Price'] = price
             item['Image'] = image_url
@@ -115,10 +117,13 @@ async def get_google_search_results(query, page=1):
 
         result_data = []
         for i, item in enumerate(data.get('items', [])):
+            # Shorten the link URL
+            short_link_url = s.tinyurl.short(item.get('link'))
+
             result_data.append({
                 "Recommendation": start_index + i,
                 "Category": item.get('title'),
-                "link": item.get('link'),
+                "link": short_link_url,  # Use the shortened link URL
                 "Price": item.get('Price'),  # Get the price from the item
                 "Image": item.get('Image'),  # Get the image URL from the item
                 "Sizes": ', '.join(item.get('Sizes', []))  # Get the sizes from the item and join them as a string
