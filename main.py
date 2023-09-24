@@ -137,7 +137,7 @@ async def get_google_search_results(query, page=1):
         messages.append(
             f"You can specify seeing up to {num} results. You are now seeing {min(num, len(result_data))} results.")
         result = {
-            "assistant_hint": """Display an Excel-style table with columns for Product name, Image, and Product Sizes. 
+            "assistant_hint": """Display Product name, Image, and Product Sizes. 
             Product results should iterate vertically. 
             You must have the product name under the image, and Price. Only one set of rows/columns needs a link. 
             Must also have an 'AI Recommended' column (with 'Trending: Shop Now 😊 (which should have link) ' for one of the products (with link) and just the link for the non-recommended).
