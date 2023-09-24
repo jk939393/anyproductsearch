@@ -12,7 +12,7 @@ import scrape1
 #with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
 import urllib.parse
 API_KEY = "AIzaSyBbvhM0tfQDlrI2ndRbZAN1YKBmwwStIrw"
-CX = "c5242d010cb334682"
+CX = "c660620618b3f4e27"
 a=API_KEY
 b= CX
 BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
@@ -110,8 +110,8 @@ async def get_google_search_results(query, page=1):
 
         result = {
 
-            "assistant_hint": """Display an Excel-style table with columns for Product name and image and size (results must be side bv side). 
-            You must have product name under image,Brand, and linK and Price!. Must also have and AI Recommended column (with 'Recommended:Shop Now' for one of the prodcut (with link)' or No). Ensure the table and font are colorful. "
+            "assistant_hint": """Display word dev at start, Product name and image and size (results must be side bv side). 
+            You must have product name under image,Brand, and linK and Price!. Must also have and AI Recommended column (with 'Recommended:Shop Now' for one of the prodcut (with link)' or No)."
             Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.""",
             "results": result_data,
             "assistant_hint" "atached the price value f{price1} I gave you to all the items, as we are testing"
