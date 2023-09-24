@@ -140,7 +140,7 @@ async def get_google_search_results(query, page=1):
             "assistant_hint": """Display Product name, Image, and Product Sizes. 
             Product results should iterate vertically. 
             You must have the product name under the image, and Price. Only one set of rows/columns needs a link. 
-            Must also have an 'AI Recommended' column (with 'Trending: Shop Now 😊 (which should have link) ' for one of the products (with link) and just the link for the non-recommended).
+            Must also have an 'AI Recommended' column (with 'Trending: Shop Now 😊 use 1 emoji per listing (which should have link) ' for one of the products (with link) and just the link for the non-recommended).
             Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.""",
             "results": result_data,
             "assistant_hint2": messages,
