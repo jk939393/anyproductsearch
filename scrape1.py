@@ -61,3 +61,4 @@ class Scraper:
 
     def close(self):
         self.driver.quit()
+
