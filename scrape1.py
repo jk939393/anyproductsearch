@@ -5,6 +5,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import os
+import pyshorteners
 
 import user_agents_file
 
@@ -22,15 +23,19 @@ def scrape_content(urls):
     chrome_options.add_argument("--disable-software-rasterizer")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
+
     # Initialize Selenium Chrome driver
     chromedriver_path = os.environ.get("CHROMEDRIVER_PATH")
     if chromedriver_path:
         driver = webdriver.Chrome(options=chrome_options)
     else:
         driver = webdriver.Chrome(options=chrome_options)
+
+    # Initialize URL shortener
+    s = pyshorteners.Shortener()
+
     for url in urls:
         driver.get(url)
-        #time.sleep(random.uniform(1, 5))  # Rate limiting
 
         # Fetch page source and parse it with BeautifulSoup
         page_source = driver.page_source
@@ -50,7 +55,10 @@ def scrape_content(urls):
         image_div = soup.select_one('.crop-image-container')
         image_url = image_div['data-before-crop-src'] if image_div else "Image content not found!"
 
-        results.append((price, image_url, sizes))
+        # Shorten the image URL
+        short_image_url = s.tinyurl.short(image_url)
+
+        results.append((price, short_image_url, sizes))
 
     driver.quit()
     return results
