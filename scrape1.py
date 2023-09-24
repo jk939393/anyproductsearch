@@ -29,7 +29,7 @@ def scrape_single_url(url):
     caps = DesiredCapabilities().CHROME
     caps["pageLoadStrategy"] = "none"
 
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options, desired_capabilities=caps)
+    driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=chrome_options)
     driver.get(url)
 
     page_source = driver.page_source
