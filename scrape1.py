@@ -11,6 +11,14 @@ import user_agents_file
 logging.basicConfig(level=logging.DEBUG)
 UsrAgent = user_agents_file.USER_AGENTS
 
+
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.javascript": 2})  # This line disables JavaScript
+
+driver = webdriver.Chrome(options=chrome_options)
 def scrape_content(urls):
     results = []
 
