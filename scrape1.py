@@ -1,78 +1,63 @@
 from bs4 import BeautifulSoup
 import logging
-import random
-import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import os
 import pyshorteners
 
-import user_agents_file
 
 logging.basicConfig(level=logging.DEBUG)
-UsrAgent = user_agents_file.USER_AGENTS
 
-def scrape_content(urls):
-    results = []
 
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--disable-software-rasterizer")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
+class Scraper:
+    def __init__(self):
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--disable-software-rasterizer")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--no-sandbox")
 
-    # Initialize Selenium Chrome driver
-    chromedriver_path = os.environ.get("CHROMEDRIVER_PATH")
-    if chromedriver_path:
-        driver = webdriver.Chrome(options=chrome_options)
-    else:
-        driver = webdriver.Chrome(options=chrome_options)
+        chromedriver_path = os.environ.get("CHROMEDRIVER_PATH")
+        if chromedriver_path:
+            self.driver = webdriver.Chrome(options=chrome_options)
+        else:
+            self.driver = webdriver.Chrome(options=chrome_options)
 
-    # Initialize URL shortener
-    s = pyshorteners.Shortener()
+        self.shortener = pyshorteners.Shortener()
 
-    for url in urls:
-        driver.get(url)
+    def scrape_content(self, urls):
+        results = []
+        for url in urls:
+            self.driver.get(url)
 
-        # Fetch page source and parse it with BeautifulSoup
-        page_source = driver.page_source
-        soup = BeautifulSoup(page_source, 'html.parser')
+            # Fetch page source and parse it with BeautifulSoup
+            page_source = self.driver.page_source
+            soup = BeautifulSoup(page_source, 'html.parser')
 
-        # Extracting the sizes
-        size_divs = soup.select('.product-intro__size-radio .product-intro__size-radio-inner')
-        sizes = [div.text for div in size_divs]
+            # Extracting the sizes
+            size_divs = soup.select('.product-intro__size-radio .product-intro__size-radio-inner')
+            sizes = [div.text for div in size_divs]
 
-        # Extracting the price
-        price_div = soup.select_one('.product-intro__head-mainprice .original.from span')
-        if not price_div:
-            price_div = soup.select_one('.discount.from span')
-        price = price_div.text if price_div else "Price content not found!"
+            # Extracting the price
+            price_div = soup.select_one('.product-intro__head-mainprice .original.from span')
+            if not price_div:
+                price_div = soup.select_one('.discount.from span')
+            price = price_div.text if price_div else "Price content not found!"
 
-        # Extracting the image URL
-        image_div = soup.select_one('.crop-image-container')
-        image_url = image_div['data-before-crop-src'] if image_div else "Image content not found!"
+            # Extracting the image URL
+            image_div = soup.select_one('.crop-image-container')
+            image_url = image_div['data-before-crop-src'] if image_div else "Image content not found!"
 
-        # Shorten the image URL
-        short_image_url = s.tinyurl.short(image_url)
+            # Shorten the image URL
+            short_image_url = self.shortener.tinyurl.short(image_url)
 
-        results.append((price, short_image_url, sizes))
-        print(short_image_url)
+            results.append((price, image_url, sizes))
+            print(short_image_url)
 
-    driver.quit()
-    return results
+        return results
 
-# Test the function
-urls = ["https://us.shein.com/SHEIN-EZwear-High-Waist-Flare-Leg-Pants-p-11805842-cat-1740.html?mallCode=1"]
-scraped_results = scrape_content(urls)
-
-for url, (price, image_url, sizes) in zip(urls, scraped_results):
-    logging.info(f"URL: {url}")
-    logging.info(f"Price: {price}")
-    logging.info(f"Image URL: {image_url}")
-    logging.info(f"Sizes: {', '.join(sizes)}")
-
-if __name__ == '__main__':
-    scrape_content(urls)
+    def close(self):
+        self.driver.quit()
