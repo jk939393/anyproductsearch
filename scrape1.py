@@ -5,60 +5,57 @@ import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import os
-
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from webdriver_manager.chrome import ChromeDriverManager
+from concurrent.futures import ThreadPoolExecutor
+import logging
 import user_agents_file
 
 logging.basicConfig(level=logging.DEBUG)
 UsrAgent = user_agents_file.USER_AGENTS
 
-
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.javascript": 2})  # This line disables JavaScript
-
-driver = webdriver.Chrome(options=chrome_options)
-def scrape_content(urls):
-    results = []
-
+def scrape_single_url(url):
     chrome_options = Options()
     chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-software-rasterizer")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
 
-    # Initialize Selenium Chrome driver
-    chromedriver_path = os.environ.get("CHROMEDRIVER_PATH")
-    if chromedriver_path:
-        driver = webdriver.Chrome(options=chrome_options)
-    else:
-        driver = webdriver.Chrome(options=chrome_options)
-    for url in urls:
-        driver.get(url)
-        #time.sleep(random.uniform(1, 5))  # Rate limiting
+    caps = DesiredCapabilities().CHROME
+    caps["pageLoadStrategy"] = "none"
 
-        # Fetch page source and parse it with BeautifulSoup
-        page_source = driver.page_source
-        soup = BeautifulSoup(page_source, 'html.parser')
+    driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=chrome_options, desired_capabilities=caps)
+    driver.get(url)
 
-        # Extracting the sizes
-        size_divs = soup.select('.product-intro__size-radio .product-intro__size-radio-inner')
-        sizes = [div.text for div in size_divs]
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source, 'html.parser')
 
-        # Extracting the price
-        price_div = soup.select_one('.product-intro__head-mainprice .original.from span')
-        if not price_div:
-            price_div = soup.select_one('.discount.from span')
-        price = price_div.text if price_div else "Price content not found!"
+    size_divs = soup.select('.product-intro__size-radio .product-intro__size-radio-inner')
+    sizes = [div.text for div in size_divs]
 
-        # Extracting the image URL
-        image_div = soup.select_one('.crop-image-container')
-        image_url = image_div['data-before-crop-src'] if image_div else "Image content not found!"
+    price_div = soup.select_one('.product-intro__head-mainprice .original.from span')
+    if not price_div:
+        price_div = soup.select_one('.discount.from span')
+    price = price_div.text if price_div else "Price content not found!"
 
-        results.append((price, image_url, sizes))
+    image_div = soup.select_one('.crop-image-container')
+    image_url = image_div['data-before-crop-src'] if image_div else "Image content not found!"
 
     driver.quit()
+
+    return (price, image_url, sizes)
+
+def scrape_content(urls):
+    results = []
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        results = list(executor.map(scrape_single_url, urls))
     return results
+
 
 # Test the function
 urls = ["https://us.shein.com/SHEIN-EZwear-High-Waist-Flare-Leg-Pants-p-11805842-cat-1740.html?mallCode=1"]
