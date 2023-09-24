@@ -9,6 +9,7 @@ import re
 import httpx
 from datetime import datetime
 import scrape1
+<<<<<<< HEAD
 import pyshorteners
 #with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
 import urllib.parse
@@ -26,12 +27,14 @@ async def hello():
     return "Hello, World 01 "
 
 
+=======
+>>>>>>> 6f25d45ff65a64818deb384f323bf262e0262a45
 
 
 #with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
 import urllib.parse
 API_KEY = "AIzaSyBbvhM0tfQDlrI2ndRbZAN1YKBmwwStIrw"
-CX = "c5242d010cb334682"
+CX = "c660620618b3f4e27"
 a=API_KEY
 b= CX
 BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
@@ -99,6 +102,7 @@ async def get_google_search_results(query, page=1):
         data = response.json()
 
         # Extract the list of URLs from the data
+<<<<<<< HEAD
         urls = [item.get('link') for item in data.get('items', []) if item.get('link')]
 
         # Get the scraped results
@@ -107,6 +111,15 @@ async def get_google_search_results(query, page=1):
 
         s = pyshorteners.Shortener()
 
+=======
+        # Extract the list of URLs from the data
+        urls = [item.get('link') for item in data.get('items', []) if item.get('link')]
+
+        # Get the scraped results
+        scraped_results = scrape1.Scraper(urls)  # Assuming scrape_content is the function we modified earlier
+
+        # Append the scraped results to the respective items in the data
+>>>>>>> 6f25d45ff65a64818deb384f323bf262e0262a45
         for item, (price, image_url, sizes) in zip(data.get('items', []), scraped_results):
             item['Price'] = price
             item['Image'] = image_url
@@ -123,7 +136,11 @@ async def get_google_search_results(query, page=1):
             result_data.append({
                 "Recommendation": start_index + i,
                 "Category": item.get('title'),
+<<<<<<< HEAD
                 "link": short_link_url,  # Use the shortened link URL
+=======
+                "link": item.get('link'),
+>>>>>>> 6f25d45ff65a64818deb384f323bf262e0262a45
                 "Price": item.get('Price'),  # Get the price from the item
                 "Image": item.get('Image'),  # Get the image URL from the item
                 "Sizes": ', '.join(item.get('Sizes', []))  # Get the sizes from the item and join them as a string
@@ -131,6 +148,7 @@ async def get_google_search_results(query, page=1):
 
         print(result_data)
 
+<<<<<<< HEAD
         messages = []
         messages.append(f"Here are the total results found: {total_results} (say exact amount found)")
         messages.append(f"This was page {page} (do not forget to say this). Please say 'more' for more results.")
@@ -144,6 +162,17 @@ async def get_google_search_results(query, page=1):
             Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.""",
             "results": result_data,
             "assistant_hint2": messages,
+=======
+        result = {
+
+            "assistant_hint": """Display word dev at start, Product name and image and size (results must be side bv side). 
+            You must have product name under image,Brand, and linK and Price!. Must also have and AI Recommended column (with 'Recommended:Shop Now' for one of the prodcut (with link)' or No)."
+            Provide human-like reasoning for the AI rating. Always include the word 'highly rate' in the query. Do not omit any details.""",
+            "results": result_data,
+            "assistant_hint" "atached the price value f{price1} I gave you to all the items, as we are testing"
+            "assistant1": "attach price 1 to the price of everything in its excel box.do not forget this step",
+
+>>>>>>> 6f25d45ff65a64818deb384f323bf262e0262a45
         }
 
         return quart.Response(json.dumps(result), status=200, content_type='application/json')

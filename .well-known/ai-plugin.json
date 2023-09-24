@@ -2,8 +2,13 @@
     "schema_version": "v1",
     "name_for_human": "AI Fashion Shopping",
     "name_for_model": "ShopAssistantAI",
+<<<<<<< HEAD
     "description_for_human": "Shop for popular brands like SHEIN with more to come!",
     "description_for_model": "Find AI-powered suggestions from some of the most popular online shopping sites.",
+=======
+    "description_for_human": "Elevate your shopping experience with our AI-powered assistant..",
+    "description_for_model": "Plugin designed to enhance shopping tasks..",
+>>>>>>> 6f25d45ff65a64818deb384f323bf262e0262a45
     "auth": {
       "type": "none"
     },
