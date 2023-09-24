@@ -65,7 +65,7 @@ class Scraper:
             proxy_obj.socks5_proxy = proxy
 
         capabilities = webdriver.DesiredCapabilities.CHROME
-        proxy_obj.add_to_capabilities(capabilities)
+        capabilities.update(proxy_obj.to_capabilities())
 
         chrome_options.merge(capabilities)
 
