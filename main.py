@@ -13,7 +13,7 @@ import pyshorteners
 #with AI suggestions most powerful AI tool # a fun and powerful product search app with ai recomenndations  #specify and rating and price for a custom AI recommendation
 import urllib.parse
 API_KEY = "AIzaSyBbvhM0tfQDlrI2ndRbZAN1YKBmwwStIrw"
-CX = "c5242d010cb334682"
+CX = "c660620618b3f4e27"
 a=API_KEY
 b= CX
 BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
