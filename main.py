@@ -8,6 +8,7 @@ from datetime import datetime
 import urllib.parse
 import json
 import httpx
+from pyshorteners import Shortener
 API_KEY = "AIzaSyBbvhM0tfQDlrI2ndRbZAN1YKBmwwStIrw"
 CX = "c660620618b3f4e27"
 BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
@@ -20,9 +21,14 @@ async def hello():
     return "Hello, World 01 "
 
 
+from pyshorteners import Shortener
+
+
 @app.route("/google_search/<string:query>", methods=['GET'])
 async def get_google_search_results(query, page=1):
     try:
+        s = Shortener()  # Initialize the Shortener
+
         query = f"{query} highly rated for adults"
         page = int(request.args.get('page', 1))
         num = int(request.args.get('results', 3))
@@ -49,11 +55,15 @@ async def get_google_search_results(query, page=1):
             # Extract image link
             image_link = item.get('pagemap', {}).get('cse_image', [{}])[0].get('src', None)
 
+            # Shorten the link and image URL
+            short_link_url = s.tinyurl.short(item.get('link'))
+            short_image_url = s.tinyurl.short(image_link) if image_link else None
+
             result_data.append({
                 "Recommendation": start_index + i,
                 "Category": item.get('title'),
-                "link": item.get('link'),
-                "Image": image_link
+                "link": short_link_url,
+                "Image": short_image_url
             })
 
         total_results = data.get('searchInformation', {}).get('totalResults', 0)
