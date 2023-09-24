@@ -108,3 +108,9 @@ class Scraper:
 
     def close(self):
         self.driver.quit()
+
+# Example usage:
+# scraper = Scraper()
+# urls = ["http://example.com/product1", "http://example.com/product2"]
+# scraper.scrape_content(urls)
+# scraper.close()

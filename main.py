@@ -84,7 +84,7 @@ async def get_google_search_results(query, page=1):
         urls = [item.get('link') for item in data.get('items', []) if item.get('link')]
 
         # Get the scraped results
-        scraped_results = scrape1.scrape_content(urls)  # Assuming scrape_content is the function we modified earlier
+        scraped_results = scrape1.Scraper(urls)  # Assuming scrape_content is the function we modified earlier
 
         # Append the scraped results to the respective items in the data
         for item, (price, image_url, sizes) in zip(data.get('items', []), scraped_results):
