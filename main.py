@@ -46,10 +46,14 @@ async def get_google_search_results(query, page=1):
 
         result_data = []
         for i, item in enumerate(data.get('items', [])):
+            # Extract image link
+            image_link = item.get('pagemap', {}).get('cse_image', [{}])[0].get('src', None)
+
             result_data.append({
                 "Recommendation": start_index + i,
                 "Category": item.get('title'),
-                "link": item.get('link')
+                "link": item.get('link'),
+                "Image": image_link
             })
 
         total_results = data.get('searchInformation', {}).get('totalResults', 0)
