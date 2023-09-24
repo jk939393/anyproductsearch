@@ -19,6 +19,7 @@ b= CX
 BASE_URL = "https://www.googleapis.com/customsearch/v1/siterestrict"
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
+scraper = scrape1.Scraper()
 #pubmed
 
 @app.route("/")
@@ -103,7 +104,7 @@ async def get_google_search_results(query, page=1):
 
         # Get the scraped results
 
-        scraped_results = scrape1.scrape_content(urls)  # Assuming scrape_content is the function we modified earlier
+        scraped_results = scraper.scrape_content(urls)
 
         s = pyshorteners.Shortener()
 
@@ -151,6 +152,9 @@ async def get_google_search_results(query, page=1):
         print(f"An error occurred: {e}")
         return quart.Response(f"An error occurred: {e}", status=500)
 
+@app.after_serving
+async def shutdown():
+    scraper.close()
 
 @app.get("/logo.png")
 async def plugin_logo():
