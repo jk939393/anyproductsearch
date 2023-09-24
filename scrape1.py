@@ -51,8 +51,12 @@ class Scraper:
             image_div = soup.select_one('.crop-image-container')
             image_url = image_div['data-before-crop-src'] if image_div else "Image content not found!"
 
-            # Shorten the image URL
-            short_image_url = self.shortener.tinyurl.short(image_url)
+            url_to_shorten = "http://Image content not found!"
+
+            if url_to_shorten != "http://Image content not found!":
+                short_image_url = self.shortener.tinyurl.short(url_to_shorten)
+            else:
+                short_image_url = url_to_shorten  # or any other default value you'd like
 
             results.append((price, image_url, sizes))
             print(short_image_url)
