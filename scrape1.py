@@ -18,7 +18,10 @@ def scrape_content(urls):
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
-
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-software-rasterizer")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
     # Initialize Selenium Chrome driver
     chromedriver_path = os.environ.get("CHROMEDRIVER_PATH")
     if chromedriver_path:
